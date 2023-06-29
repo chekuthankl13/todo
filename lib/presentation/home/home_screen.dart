@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/intl.dart';
 import 'package:todo/config/config.dart';
 import 'package:todo/database/hive_helpers.dart';
 import 'package:todo/logic/bloc_export.dart';
@@ -64,14 +65,26 @@ class HomeScreen extends StatelessWidget {
                         border: Border.all(color: Config.baseGrey, width: 16)),
                   ),
                 ),
-                const Positioned(
-                  top: kToolbarHeight,
+                Positioned(
+                  top: kToolbarHeight - 5,
                   left: 0,
                   right: 0,
-                  child: Text(
-                    "My TodoLIst",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Config.white),
+                  child: Column(
+                    children: [
+                      //DateFormat("MMM d, yyyy").format(now)
+
+                      Text(
+                        DateFormat("MMM d, yyyy").format(DateTime.now()),
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Config.white),
+                      ),
+                      spaceHeight(5),
+                      const Text(
+                        "My TodoLIst",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Config.white),
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(
@@ -83,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                     width: 200,
                     decoration: BoxDecoration(
                         color: Config.white,
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(color: Colors.grey, blurRadius: 2)
                         ],
                         borderRadius: BorderRadius.circular(10)),
@@ -188,6 +201,11 @@ class HomeScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         var data = completedTask[index];
                         return ListTile(
+                          onTap: () {
+                            navigatorKey.currentState!.push(MaterialPageRoute(
+                              builder: (context) => TaskViewScreen(task: data),
+                            ));
+                          },
                           contentPadding: EdgeInsets.symmetric(horizontal: 5),
                           leading: data.time.isNotEmpty
                               ? const CircleAvatar(

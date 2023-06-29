@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:todo/database/hive_models/task_hive_model.dart';
 import 'package:todo/logic/bloc_export.dart';
+import 'package:todo/notification/notification.dart';
 import 'package:todo/presentation/splash/splash_screen.dart';
 import 'package:todo/utils/utils.dart';
 
@@ -27,6 +28,10 @@ void main() async {
 // bloc observer
 
   Bloc.observer = MyBlocObserver();
+
+// notification setup
+
+  await NotificationServices().initializeNotification();
 
   runApp(const MainApp());
 }

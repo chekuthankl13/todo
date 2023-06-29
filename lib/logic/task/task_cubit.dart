@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:todo/database/hive_helpers.dart';
 import 'package:todo/database/hive_models/task_hive_model.dart';
+import 'package:todo/notification/notification.dart';
 import 'package:uuid/uuid.dart';
 
 part 'task_state.dart';
@@ -33,7 +34,41 @@ class TaskCubit extends Cubit<TaskState> {
             note: note);
 
         await HIveHelpers().createTask(task: task);
-        emit(TaskCreated());
+
+        if (time!.isNotEmpty && date!.isNotEmpty) {
+          int year = int.parse(date.split("-")[0]);
+          int month = int.parse(date.split("-")[1]);
+          int day = int.parse(date.split("-")[2]);
+
+          // int hour = int.parse(time.split(":")[0]);
+          // int minutes = int.parse(time.split(":")[1].split(" ")[0]);
+
+          // Split the time into hour and minute components
+          List<String> components = time.split(':');
+          int hour = int.parse(components[0]);
+          int minutes = int.parse(components[1].split(' ')[0]);
+
+// Determine whether it's AM or PM
+          bool isPM = components[1].contains('PM');
+
+// Convert the hour component to the 24-hour format
+          if (isPM && hour != 12) {
+            hour += 12;
+          } else if (!isPM && hour == 12) {
+            hour = 0;
+          }
+
+          await NotificationServices().scheduleNotification(
+              year: year,
+              month: month,
+              day: day,
+              hour: hour,
+              minutes: minutes,
+              title: title);
+          emit(TaskCreated());
+        } else {
+          emit(TaskCreated());
+        }
       }
     } catch (e) {
       emit(TaskError(error: "some error occured ! ${e.toString()}"));
@@ -78,8 +113,37 @@ class TaskCubit extends Cubit<TaskState> {
             note: note);
 
         HIveHelpers().editTask(task: task);
+        if (time!.isNotEmpty && date!.isNotEmpty) {
+          int year = int.parse(date.split("-")[0]);
+          int month = int.parse(date.split("-")[1]);
+          int day = int.parse(date.split("-")[2]);
 
-        emit(TaskEdited());
+          // Split the time into hour and minute components
+          List<String> components = time.split(':');
+          int hour = int.parse(components[0]);
+          int minutes = int.parse(components[1].split(' ')[0]);
+
+// Determine whether it's AM or PM
+          bool isPM = components[1].contains('PM');
+
+// Convert the hour component to the 24-hour format
+          if (isPM && hour != 12) {
+            hour += 12;
+          } else if (!isPM && hour == 12) {
+            hour = 0;
+          }
+
+          await NotificationServices().scheduleNotification(
+              year: year,
+              month: month,
+              day: day,
+              hour: hour,
+              minutes: minutes,
+              title: title);
+          emit(TaskEdited());
+        } else {
+          emit(TaskEdited());
+        }
       }
     } catch (e) {
       emit(TaskError(error: "some error occured ! ${e.toString()}"));
