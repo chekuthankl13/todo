@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:todo/database/hive_models/task_hive_model.dart';
+import 'package:todo/logic/bloc_export.dart';
 import 'package:todo/presentation/splash/splash_screen.dart';
 import 'package:todo/utils/utils.dart';
 
 import 'config/config.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+// disable landscape
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
+// init hive
+  await Hive.initFlutter();
+
+// register adapter
+  Hive.registerAdapter<TaskHiveModel>(TaskHiveModelAdapter());
+
+//open box
+  await Hive.openBox<TaskHiveModel>("task");
+
+// bloc observer
+
+  Bloc.observer = MyBlocObserver();
+
   runApp(const MainApp());
 }
 

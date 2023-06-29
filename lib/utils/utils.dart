@@ -13,13 +13,3 @@ sH(context) => MediaQuery.of(context).size.height;
 sW(context) => MediaQuery.of(context).size.width;
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-errorToast(context, {required error}) =>
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(error),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-        margin: const EdgeInsets.all(5),
-      ),
-    );

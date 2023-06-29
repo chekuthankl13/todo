@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo/config/config.dart';
@@ -20,6 +21,25 @@ BottomAppBar btmnav(BuildContext context,
             backgroundColor: Config.baseClr,
             foregroundColor: Config.white),
         child: Text(txt),
+      ));
+}
+
+BottomAppBar btmnavLoading(
+  BuildContext context,
+) {
+  return BottomAppBar(
+      height: 70,
+      surfaceTintColor: Config.white,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            fixedSize: Size(sW(context) / 2, 30),
+            backgroundColor: Config.baseClr,
+            foregroundColor: Config.white),
+        child: const CupertinoActivityIndicator(color: Config.white),
       ));
 }
 
@@ -128,3 +148,15 @@ startTimePicker(BuildContext context, TextEditingController cntr) async {
     print("Time is not selected");
   }
 }
+
+///////// toast
+
+errorToast(context, {required error}) =>
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(error),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        margin: const EdgeInsets.all(5),
+      ),
+    );

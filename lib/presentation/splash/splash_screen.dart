@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:todo/config/config.dart';
+import 'package:todo/logic/bloc_export.dart';
 import 'package:todo/presentation/home/home_screen.dart';
 import 'package:todo/utils/utils.dart';
 
@@ -28,7 +29,10 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     Timer(const Duration(seconds: 2), () {
       navigatorKey.currentState!.pushReplacement(MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
+        builder: (context) => BlocProvider(
+          create: (context) => TaskCubit(),
+          child: const HomeScreen(),
+        ),
       ));
     });
     super.initState();

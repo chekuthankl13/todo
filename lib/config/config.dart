@@ -14,5 +14,9 @@ class Config {
 
   static const baseBg = Color.fromRGBO(242, 245, 249, 1); // rgba(51, 51, 53, 1)
 
-  static const txtClr = Color.fromRGBO(51, 51, 53, 1);
+  static const txtClr = Color.fromRGBO(51, 51, 53, 1); //rgba(245, 238, 249, 1)
+
+  static const grey = Color.fromRGBO(245, 238, 249, 1); //rgba(236, 244, 252, 1)
+
+  static const grey2 = Color.fromRGBO(236, 244, 252, 1);
 }

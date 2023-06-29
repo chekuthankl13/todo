@@ -4,40 +4,55 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:todo/config/config.dart';
+import 'package:todo/database/hive_models/task_hive_model.dart';
 import 'package:todo/logic/bloc_export.dart';
 import 'package:todo/presentation/widgets/widgets.dart';
 import 'package:todo/utils/utils.dart';
 
-class AddTaskScreen extends StatefulWidget {
-  const AddTaskScreen({super.key});
+class EditTaskScreen extends StatefulWidget {
+  final TaskHiveModel task;
+  const EditTaskScreen({required this.task, super.key});
 
   @override
-  State<AddTaskScreen> createState() => _AddTaskScreenState();
+  State<EditTaskScreen> createState() => _EditTaskScreenState();
 }
 
-class _AddTaskScreenState extends State<AddTaskScreen> {
-  final TextEditingController tCntr = TextEditingController();
-  final TextEditingController iCntr = TextEditingController();
+class _EditTaskScreenState extends State<EditTaskScreen> {
+  ValueNotifier<String?> imgVal = ValueNotifier(null);
+  late TextEditingController tCntr;
 
-  final TextEditingController timeCntr = TextEditingController();
-  final TextEditingController dateCntr = TextEditingController();
-  final TextEditingController noteCntr = TextEditingController();
+  late TextEditingController iCntr;
 
-  ValueNotifier<XFile?> imgVal = ValueNotifier(null);
+  late TextEditingController timeCntr;
+  late TextEditingController dateCntr;
+  late TextEditingController noteCntr;
+
+  @override
+  void initState() {
+    tCntr = TextEditingController(text: widget.task.title);
+    iCntr = TextEditingController();
+
+    timeCntr = TextEditingController(text: widget.task.time);
+    dateCntr = TextEditingController(text: widget.task.date);
+    noteCntr = TextEditingController(text: widget.task.note);
+    if (widget.task.img.isNotEmpty) {
+      imgVal.value = widget.task.img;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Config.baseBg,
       bottomNavigationBar: BlocConsumer<TaskCubit, TaskState>(
         listener: (context, state) {
           if (state is TaskError) {
             errorToast(context, error: state.error);
           }
 
-          if (state is TaskCreated) {
-            errorToast(context, error: "Task created successfully!! ");
-
+          if (state is TaskEdited) {
+            errorToast(context, error: "Task edited successfully !!..");
+            navigatorKey.currentState!.pop();
             navigatorKey.currentState!.pop();
           }
         },
@@ -46,20 +61,20 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
             return btmnavLoading(context);
           }
 
-          return btmnav(context, txt: "Save", fun: () {
-            context.read<TaskCubit>().createTask(
+          return btmnav(context, txt: "Update Task", fun: () {
+            context.read<TaskCubit>().editTask(
                 title: tCntr.text.trim(),
                 date: dateCntr.text.trim(),
                 time: timeCntr.text.trim(),
                 note: noteCntr.text.trim(),
-                img: imgVal.value?.path);
+                img: imgVal.value,
+                id: widget.task.id);
           });
         },
       ),
       body: SafeArea(
         child: Column(
           children: [
-//////// header
             Stack(
               children: [
                 Container(
@@ -68,7 +83,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   color: Config.baseClr,
                   alignment: Alignment.center,
                   child: const Text(
-                    "Save New Task",
+                    "Edit Task",
                     style: TextStyle(color: Config.white),
                   ),
                 ),
@@ -117,7 +132,8 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
               ],
             ),
-/************************** */
+////////////////////////////////
+
             Expanded(
                 child: ListView(
               shrinkWrap: true,
@@ -162,7 +178,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                               width: sW(context),
                               color: Config.white,
                               child: Image.file(
-                                File(imgVal.value!.path),
+                                File(imgVal.value!),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -202,7 +218,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     );
   }
 
-//// image pick function
+  //// image pick function
 
   XFile? image;
 
@@ -212,7 +228,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     var img = await picker.pickImage(source: ImageSource.gallery);
 
     // setState(() {
-    imgVal.value = img;
+    imgVal.value = img!.path;
     // });
   }
 }
