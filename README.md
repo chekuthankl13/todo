@@ -1,3 +1,3 @@
 # todo
 
-A new Flutter project.
+A TodoApp with local notification.
